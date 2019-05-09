@@ -1,0 +1,7 @@
+--estimativa de termino do rebalance 
+set lines 132 pages 1000 trimspool on
+column path format a30
+select vao.group_number, vadg.name, vao.operation, vao.state, vao.est_work,
+vao.est_rate, vao.est_minutes, vao.power, vao.actual actual_power
+from v$asm_operation vao, v$asm_diskgroup vadg
+where vao.group_number = vadg.group_number;
