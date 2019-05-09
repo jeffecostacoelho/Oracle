@@ -1,0 +1,5 @@
+set lines 300
+col disco for a60
+SELECT dg.name AS diskgroup, SUBSTR(d.name,1,16) AS asmdisk, d.path as disco
+     FROM V$ASM_DISKGROUP dg, V$ASM_DISK d 
+     WHERE dg.group_number = d.group_number;
