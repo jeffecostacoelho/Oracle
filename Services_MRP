@@ -6,3 +6,9 @@ alter database recover managed standby database cancel;
 
 -- Sobe serviços no standby
 alter database recover managed standby database using current logfile disconnect from session parallel 16;
+
+-- Ver o último archive enviado
+select max(sequence#) from  v$archived_log;
+ 
+-- Ver o último archive aplicado
+select max(sequence#) from  v$archived_log where applied='YES';
