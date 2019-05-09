@@ -1,0 +1,7 @@
+Verificar espaço livre por DG mountado
+col percent_free format 99;
+col name format a15;
+col total_gb  format 999,999.9;
+col free_gb format 999,999.9;
+SELECT NAME, free_mb/1024 free_gb, total_mb/1024 total_gb, (FREE_MB/TOTAL_MB)*100 percent_free from v$ASM_DISKGROUP
+where state='MOUNTED';
