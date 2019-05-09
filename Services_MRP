@@ -1,0 +1,8 @@
+--Verificar se o processo do MRP está no ar
+SELECT INST_ID, process,status,block#,sequence# FROM gv$managed_standby where process = 'MRP0';
+
+-- Para os serviços do standby
+alter database recover managed standby database cancel;
+
+-- Sobe serviços no standby
+alter database recover managed standby database using current logfile disconnect from session parallel 16;
