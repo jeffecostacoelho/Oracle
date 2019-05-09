@@ -1,0 +1,28 @@
+— Obtendo informações de quais tabelas fazem referência a uma tabela.
+
+set lines 300
+set pages 1000
+col DONO_OBJETO for a18
+col NOME_OBJETO_PAI for a20
+col REF_PELO_USUARIO for a18
+col NOME_OBJETO_FILHO for a30
+col NOME_CONTRAINTS for a30
+col ON_DELETE for a20
+
+select
+       r.owner DONO_OBJETO,
+       o.table_name NOME_OBJETO_PAI,
+       r.r_owner REF_PELO_USUARIO,
+       r.table_name NOME_OBJETO_FILHO,
+       r.constraint_name NOME_CONTRAINTS,
+       r.delete_rule ON_DELETE
+    from
+       user_constraints r,
+       user_constraints o
+    where
+       r.r_owner = o.owner and
+      r.r_constraint_name = o.constraint_name and
+      o.constraint_type in (‘P’,’U’) and
+      r.constraint_type = ‘R’ and
+      o.table_name = ‘&NOME_OBJETO’
+      order by r.table_name;
