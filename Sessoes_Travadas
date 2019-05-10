@@ -43,4 +43,5 @@ from gv$process p
     and o.object_id(+) = s.PLSQL_ENTRY_OBJECT_ID
     and o3.object_id(+) = s.PLSQL_OBJECT_ID
     --and s.action like '%JOB_0000000311_0064900039%'
-    --and s.event not in ( 'SQL*Net message from client','db file sequential read','PX Deq
+    --and s.event not in ( 'SQL*Net message from client','db file sequential read','PX Deq: Execution Msg','SQL*Net message to client','Backup: MML write backup piece','jobq slave wait')
+order by s.BLOCKING_SESSION , s.BLOCKING_INSTANCE, s.INST_ID, s.SID, s.SERIAL#;
