@@ -1,0 +1,46 @@
+select 'alter system kill session ''' ||  s.sid || ',' || s.serial# || ',@' || s.inst_id || ''' immediate;' 
+    , s.action
+    , s.inst_id
+    , s.sid
+    , s.serial#
+    , p.spid
+    , to_char(s.logon_time, 'dd-mon/hh24:mi') as "Logon"
+    , s.username
+    , decode(    s.username
+        , NULL, substr( s.program
+        , instr(upper(s.program), '(') )
+        , s.username )
+                  || decode(substr( s.osuser, 1+instr( s.osuser, '\') ), null, null, '/')
+                  || substr( s.osuser, 1+instr( s.osuser, '\') ) as "User/Prog/Osuser"
+    , s.EVENT
+    , o.object_name as "Executavel"
+    , o3.object_name as "SubProgram"
+    , s.BLOCKING_INSTANCE as "BLK_INST"
+    , s.BLOCKING_SESSION as  "BLK_SESS"  
+    , s.SQL_ID
+    , s.machine
+    , decode(s.status, 'ACTIVE', 'A', 'INACTIVE', 'I', 'O') AS "Atv"
+    , round(s.last_call_et/60, 1) as "Min"
+    , s.module
+    , s.program
+    , s.LockWait
+    , s.osuser
+    , s.sid
+    , rawtohex(s.saddr)
+    , s.process
+    , s.action 
+    , s.SQL_TRACE
+    , s.BLOCKING_SESSION_STATUS
+from gv$process p
+    , gv$session s
+       , dba_objects o
+       , dba_objects o3
+    where p.addr = s.paddr
+    and s.inst_id = p.inst_id
+    -- and s.status = 'ACTIVE'
+    and s.BLOCKING_SESSION is not null
+    and s.type = 'USER'
+    and o.object_id(+) = s.PLSQL_ENTRY_OBJECT_ID
+    and o3.object_id(+) = s.PLSQL_OBJECT_ID
+    --and s.action like '%JOB_0000000311_0064900039%'
+    --and s.event not in ( 'SQL*Net message from client','db file sequential read','PX Deq
