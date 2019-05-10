@@ -1,0 +1,16 @@
+select rpad(username,8) ORA_USER,
+       rpad(os_username,8) OS_USER,
+       rpad(terminal,9) TERMINAL,
+       rpad(to_char(timestamp,'dd/mm/yy hh24:mi'),14) DATA,
+       rpad(owner||'.'||obj_name,20) OBJETO,
+       rpad(action_name,10) A,
+       substr(ses_actions,07,1)||
+       substr(ses_actions,04,1)||
+       substr(ses_actions,11,1) "IDU",
+     lpad(to_char(returncode),5) RCODE
+from dba_audit_trail
+where username = upper(nvl('&usuario',username)) and
+      owner    = upper(nvl('&proprietario',owner)) and
+      obj_name = upper(nvl('&tabela',obj_name))
+order by timestamp
+/
