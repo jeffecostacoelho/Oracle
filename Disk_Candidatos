@@ -1,4 +1,4 @@
---ver discos candidatos
+--ver discos candidatos 
 set lines 500
 col path for a40
 select HEADER_STATUS,MODE_STATUS,NAME,PATH from v$asm_disk where HEADER_STATUS='CANDIDATE';
