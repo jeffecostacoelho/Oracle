@@ -1,0 +1,24 @@
+SELECT LISTAGG(auditSession, ';') WITHIN GROUP (
+ORDER BY dummy) AS auditSession
+FROM
+  (SELECT 'dummy' AS dummy,
+    ' Username: '
+    ||username
+    || ', Timestamp: '
+    ||TO_CHAR(TIMESTAMP,'DD-MON-YYYY HH24:MI:SS')
+    || ', Statement: '
+    ||action_name
+    || ', OS Username: '
+    ||os_username
+    || ', User Host: '
+    ||userhost
+    || ', Return Code: '
+    ||DECODE(returncode,'1004','-Wrong Connection','1005','-NULL Password','1017','-Wrong Password','1045','-Insufficient Priviledge','0','-Login Accepted','--') AS auditSession
+  FROM sys.dba_audit_session
+  WHERE (sysdate - TIMESTAMP)*24 < 1
+  AND returncode                <> 0
+  ORDER BY TIMESTAMP
+  )
+GROUP BY dummy
+UNION
+SELECT 'none' FROM dual 
