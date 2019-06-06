@@ -1,0 +1,11 @@
+select 
+min(to_char(creation_time,'DD/MM/YYYY')) "Create Time", 
+ts.name, round(sum(df.bytes)/1024/1024) curr_size_gb,
+round((sum(df.bytes)/1024/1024)/round(sysdate-min(creation_time)),1) growth_per_day,
+round((sum(df.bytes)/1024/1024)/round(sysdate-min(creation_time)) * 120,1) growth_120_days,
+round((sum(df.bytes)/1024/1024)/round(sysdate-min(creation_time)) * 240,1) growth_240_days,
+round((sum(bytes)/1024/1024)+((sum(df.bytes)/1024/1024)/round(sysdate-min(creation_time))*365) ) projection_365_days_mb
+from v$datafile df ,v$tablespace ts 
+where df.ts#=ts.ts# and ts.name not in ('USERS','SYSAUX','SYSTEM') and ts.name not like 'UNDO%' 
+group by df.ts#,ts.name 
+order by df.ts#;
